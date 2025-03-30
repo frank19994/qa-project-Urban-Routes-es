@@ -42,6 +42,7 @@ class UrbanRoutesPage:
     imagen_comfort = (By.XPATH, "//div[contains(@class, 'tcard') and .//div[text()='Comfort']]")
     boton_numero_telefono = (By.CLASS_NAME, 'np-button')
     ingresar_numero_telefono = (By.ID, 'phone')
+    tipo_tarifas =  (By.XPATH, '//*[@id="root"]/div/div[3]/div[3]')
     boton_siguiente = (By.CSS_SELECTOR, '.button.full')
     codigo_sms = (By.ID, 'code')
     boton_confirmar = (By.XPATH, '//*[@id="root"]/div/div[1]/div[2]/div[2]/form/div[2]/button[1]')
@@ -200,8 +201,10 @@ class UrbanRoutesPage:
 
     def set_ice_cream(self):
             agregar_helado = self.get_ice_cream()
+            WebDriverWait(self.driver, 10).until(
+                expected_conditions.element_to_be_clickable(self.agregar_helado)
+            )
             self.driver.execute_script("arguments[0].scrollIntoView(true);", agregar_helado)
-            time.sleep(0.5)
             self.driver.execute_script("arguments[0].click();", agregar_helado)
             self.driver.execute_script("arguments[0].click();", agregar_helado)
 
@@ -214,8 +217,11 @@ class UrbanRoutesPage:
             expected_conditions.element_to_be_clickable(UrbanRoutesPage.buscar_taxi)
         )
         boton_pedir_taxi= self.get_search_taxi()
+
         self.driver.execute_script("arguments[0].scrollIntoView(true);", boton_pedir_taxi)
-        time.sleep(0.5)
+        WebDriverWait(self.driver, 10).until(
+            expected_conditions.element_to_be_clickable(self.buscar_taxi)
+        )
         self.driver.execute_script("arguments[0].click();", boton_pedir_taxi)
 
 
@@ -241,8 +247,10 @@ class TestUrbanRoutes:
 
     def test_boton_pedirtaxi(self):
         self.test_set_route()
-        routes_page = UrbanRoutesPage(self.driver)
-        routes_page.set_taxi_button()
+        route_page = UrbanRoutesPage(self.driver)
+        boton = route_page.get_taxi_button()
+        assert boton.is_enabled(), "El botón de pedir taxi no esta habilitado para clic."
+        route_page.set_taxi_button()
 
     def test_imagen_comfort(self):
         self.test_boton_pedirtaxi()
@@ -255,6 +263,8 @@ class TestUrbanRoutes:
     def test_click_phone_number(self):
         self.test_imagen_comfort()
         route_page = UrbanRoutesPage(self.driver)
+        boton_numero = route_page.get_number_phone()
+        assert boton_numero.is_enabled(), "No se puede dar click en el telefono"
         route_page.set_number_phone()
 
     def test_enter_phone_number(self):
@@ -280,16 +290,22 @@ class TestUrbanRoutes:
     def test_submit_button(self):
         self.test_code_sms()
         route_page = UrbanRoutesPage(self.driver)
+        boton_enviar= route_page.get_submit_button()
+        assert boton_enviar.is_enabled(), "enviar"
         route_page.set_submit_button()
 
     def test_pay_method(self):
         self.test_submit_button()
         route_page = UrbanRoutesPage(self.driver)
+        boton_mp = route_page.get_pay_method()
+        assert boton_mp.is_enabled(), "No se puede acceder al metodo de pago"
         route_page.set_pay_method()
 
     def test_add_card(self):
         self.test_pay_method()
         route_page = UrbanRoutesPage(self.driver)
+        boton_agregar_tarjeta = route_page.get_add_card()
+        assert boton_agregar_tarjeta.is_enabled(), "No se puede agregar tarjeta"
         route_page.set_add_card()
 
 
@@ -310,11 +326,15 @@ class TestUrbanRoutes:
     def test_card_succes(self):
         self.test_enter_code_card()
         route_page = UrbanRoutesPage(self.driver)
+        boton_tarjeta_agregada= route_page.get_succes_card()
+        assert boton_tarjeta_agregada.is_enabled(), "La tarjeta no se pudo agregar con exito"
         route_page.set_succes_card()
 
     def test_button_close_form_pay(self):
         self.test_card_succes()
         route_page = UrbanRoutesPage(self.driver)
+        boton_cerrar_mp = route_page.get_button_close_form_pay()
+        assert boton_cerrar_mp.is_enabled(), "La ventana de metodo de pago no se pudo cerrar"
         route_page.set_button_close_form_pay()
 
     def test_message_driver(self):
@@ -327,16 +347,22 @@ class TestUrbanRoutes:
     def test_button_round(self):
         self.test_message_driver()
         route_page = UrbanRoutesPage(self.driver)
+        boton_manta= route_page.get_button_round()
+        assert boton_manta.is_enabled(), "No se puede agregar las mantas y pañuelos "
         route_page.set_button_round()
 
     def test_add_ice_cream(self):
         self.test_button_round()
         route_page= UrbanRoutesPage(self.driver)
+        boton_helados = route_page.get_ice_cream()
+        assert boton_helados.is_enabled(), "Los helados no se pudieron agregar"
         route_page.get_ice_cream()
 
     def test_search_taxi(self):
         self.test_add_ice_cream()
         route_page = UrbanRoutesPage(self.driver)
+        boton_bucar_taxi =route_page.get_search_taxi()
+        assert boton_bucar_taxi.is_enabled(), "No se enconto taxi"
         route_page.set_search_taxi()
 
     @classmethod
