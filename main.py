@@ -277,7 +277,10 @@ class TestUrbanRoutes:
     def test_click_next_button(self):
         self.test_enter_phone_number()
         route_page = UrbanRoutesPage(self.driver)
+        boton_sig= route_page.get_next_button()
+        assert boton_sig.is_enabled(), "No se pudo dar clic en el boton siguiente"
         route_page.set_next_button()
+
 
     def test_code_sms(self):
         self.test_click_next_button()
