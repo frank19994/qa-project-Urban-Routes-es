@@ -62,6 +62,15 @@ qa-project-Urban-Routes-es/
 ├── data.py               # Datos de entrada como direcciones, teléfono, tarjetas
 └── README.md             # Este archivo
 
+🧪 Ejecución de pruebas
+Puedes ejecutar las pruebas con el siguiente comando:
+pytest main.py
+
+O si quieres correr una prueba específica:
+pytest main.py::TestUrbanRoutes::test_search_taxi
+
+
+
 🧠 Notas adicionales
 
 Las pruebas están diseñadas para ejecutarse en Chrome.
